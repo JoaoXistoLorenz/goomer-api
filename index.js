@@ -1,6 +1,11 @@
 // server
 const restify = require('restify');
 
+const updateRestStatus =  require('./updateRestStatus')
+
+// add permition to CORS 
+var cors = require('cors')
+
 // Driver database
 const server = restify.createServer({
   name: 'myapp',
@@ -15,13 +20,21 @@ const knex = require('knex')({
       user : 'root',
       password : '',
       database : 'goomer'
-    }
+    },
+    acquireConnectionTimeout: 10000
 });
+
+updateRestStatus(knex)
+setInterval(() => {
+    updateRestStatus(knex)
+}, 60000);
 
 // Conf server
 server.use(restify.plugins.acceptParser(server.acceptable));
 server.use(restify.plugins.queryParser());
 server.use(restify.plugins.bodyParser());
+server.use(cors())
+
 server.listen(8080, function () {
   console.log('%s listening at %s', server.name, server.url);
 });
@@ -36,7 +49,7 @@ server.get('/restaurants', (req, res, next) => {
 // One restaurant
 server.get('/restaurant/:id', (req, res, next) => {
     const {id} = req.params
-    knex('restaurante').where('restaurante_id', id).then((restaurant) => {
+    knex('restaurante').where('restaurante_id', id).first().then((restaurant) => {
         !restaurant ? res.send('Nada encontrado') : res.send(restaurant);
     }, next)
 });

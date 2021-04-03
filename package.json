@@ -10,7 +10,9 @@
   "author": "joao",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "knex": "^0.95.4",
+    "lodash": "^4.17.21",
     "mysql": "^2.18.1",
     "restify": "^8.5.1",
     "restify-errors": "^8.0.2"
