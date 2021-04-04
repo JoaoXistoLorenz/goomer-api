@@ -39,6 +39,8 @@ server.listen(8080, function () {
   console.log('%s listening at %s', server.name, server.url);
 });
 
+// Restaurant routes
+// --------------------------------------------------------------
 // All restaurants
 server.get('/restaurants', (req, res, next) => {
     knex('restaurante').then((restaurants) => {
@@ -80,7 +82,6 @@ server.del('/delete/restaurant/:id', (req, res, next) => {
 
 // Time routes
 // --------------------------------------------------------------
-
 // All time of a restaurant
 server.get('/times/:id', (req, res, next) => {
     const {id} = req.params
@@ -89,7 +90,21 @@ server.get('/times/:id', (req, res, next) => {
     }, next)
 });
 
-// recuperar a data pelo id, pelo dia || pelo horario atual
+// One time
+server.get('/time/:id', (req, res, next) => {
+    const {id} = req.params
+    knex('horario').where('horario_id', id).first().then((time) => {
+        !time ? res.send('Nada encontrado') : res.send(time);
+    }, next)
+});
+
+// One day
+server.get('/time/day/:id', (req, res, next) => {
+    const {id} = req.params
+    knex('horario').where('horario_semana', id).then((time) => {
+        !time ? res.send('Nada encontrado') : res.send(time);
+    }, next)
+});
 
 // Create a time
 server.post('/create/time', (req, res, next) => {
@@ -117,7 +132,6 @@ server.del('/delete/time/:id', (req, res, next) => {
 
 // Product routes
 // --------------------------------------------------------------
-
 // All products of a restaurant
 server.get('/restaurant/products/:id', (req, res, next) => {
     const {id} = req.params
