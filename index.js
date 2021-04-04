@@ -75,7 +75,13 @@ server.put('/update/restaurant/:id', (req, res, next) => {
 server.del('/delete/restaurant/:id', (req, res, next) => {
     const {id} = req.params
     knex('restaurante').where('restaurante_id', id).delete().then((restaurant) => {
-        !restaurant ? res.send('Nada encontrado') : res.send('Dados excluídos');
+        if (restaurant) {
+            knex('horario').where('horario_restaurante', id).delete().then((times) =>{})
+            knex('produto').where('produto_restaurante', id).delete().then((products) =>{})
+            res.send('Dados do restaurante excluídos')
+        } else {
+            res.send('Nada encontrado')
+        }
     }, next)
 });
 
